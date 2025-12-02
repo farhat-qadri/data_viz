@@ -1,0 +1,88 @@
+:root {
+    --sidebar-width: 260px;
+    --primary-bg: #f4f7f6;
+    --sidebar-bg: #1e293b; /* Dark Slate */
+    --active-item: #334155;
+    --accent: #38bdf8;      /* Bright Blue */
+}
+
+body {
+    background-color: var(--primary-bg);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    height: 100vh;
+    width: var(--sidebar-width);
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: var(--sidebar-bg);
+    color: white;
+    padding-top: 20px;
+    transition: all 0.3s;
+    z-index: 1000;
+}
+
+.sidebar-brand {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    text-align: center;
+    margin-bottom: 40px;
+    letter-spacing: 1px;
+}
+
+.nav-link {
+    color: #cbd5e1;
+    font-weight: 500;
+    padding: 15px 25px;
+    border-radius: 0;
+    border-left: 4px solid transparent;
+    transition: all 0.2s;
+    cursor: pointer; /* Interaction cue */
+}
+
+.nav-link:hover {
+    color: white;
+    background-color: rgba(255,255,255,0.05);
+}
+
+.nav-link.active {
+    background-color: var(--active-item);
+    color: var(--accent);
+    border-left: 4px solid var(--accent);
+}
+
+/* Main Content Area */
+.main-content {
+    margin-left: var(--sidebar-width);
+    padding: 30px;
+}
+
+/* Tab Content Logic */
+.view-section {
+    display: none; /* Hide all sections by default */
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+.view-section.active-view {
+    display: block; /* Only show the active one */
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Card Styling */
+.viz-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    padding: 20px;
+    margin-bottom: 25px;
+    border: 1px solid #e2e8f0;
+}

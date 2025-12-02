@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Risk Analysis</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+</head>
+<body>
+
+    <div class="sidebar d-flex flex-column">
+        <div class="sidebar-brand">
+            <i class="bi bi-graph-up-arrow text-info"></i> FinRisk<span class="text-white-50">.AI</span>
+        </div>
+        
+        <ul class="nav flex-column mb-auto">
+            <li class="nav-item">
+                <a class="nav-link active" onclick="switchView('overview', this)">
+                    <i class="bi bi-speedometer2 me-2"></i> Executive Overview
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" onclick="switchView('demographics', this)">
+                    <i class="bi bi-people me-2"></i> Demographics
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" onclick="switchView('financials', this)">
+                    <i class="bi bi-cash-stack me-2"></i> Financial Health
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" onclick="switchView('history', this)">
+                    <i class="bi bi-clock-history me-2"></i> Credit History
+                </a>
+            </li>
+        </ul>
+
+        <div class="p-3">
+            <div class="card bg-dark border-secondary text-white small">
+                <div class="card-body p-2">
+                    Database Status: 
+                    {% if status %}
+                        <span class="text-success fw-bold">Connected</span>
+                    {% else %}
+                        <span class="text-danger fw-bold">Offline</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold mb-0">Risk Analysis Dashboard</h2>
+                <p class="text-muted">Interactive Loan Repayment Insights</p>
+            </div>
+            <button class="btn btn-outline-primary btn-sm"><i class="bi bi-download"></i> Export Report</button>
+        </div>
+
+        <div id="overview" class="view-section active-view">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="viz-card">
+                        <div id="kpi-trend"></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="viz-card">
+                        <div id="risk-dist"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="demographics" class="view-section">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="viz-card">
+                        <div id="edu-bar"></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="viz-card">
+                        <div id="gender-pie"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="financials" class="view-section">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="viz-card">
+                        <div id="income-box"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="history" class="view-section">
+             <div class="row">
+                <div class="col-md-12">
+                    <div class="viz-card">
+                        <div id="credit-hist"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // FUNCTION TO SWITCH TABS
+        function switchView(viewId, element) {
+            // 1. Hide all views
+            document.querySelectorAll('.view-section').forEach(el => {
+                el.classList.remove('active-view');
+            });
+
+            // 2. Show the selected view
+            document.getElementById(viewId).classList.add('active-view');
+
+            // 3. Update Sidebar Active State
+            document.querySelectorAll('.nav-link').forEach(el => {
+                el.classList.remove('active');
+            });
+            element.classList.add('active');
+
+            // 4. Force Plotly to resize (fixes layout bugs when switching tabs)
+            window.dispatchEvent(new Event('resize'));
+        }
+
+        // RENDER PLACEHOLDER CHARTS
+        var graphs = {{ graphs | tojson | safe }};
+        
+        Plotly.newPlot('kpi-trend', JSON.parse(graphs.kpi_trend));
+        Plotly.newPlot('risk-dist', JSON.parse(graphs.risk_dist));
+        Plotly.newPlot('edu-bar', JSON.parse(graphs.edu_bar));
+        Plotly.newPlot('gender-pie', JSON.parse(graphs.gender_pie));
+        Plotly.newPlot('income-box', JSON.parse(graphs.income_box));
+        Plotly.newPlot('credit-hist', JSON.parse(graphs.credit_hist));
+
+    </script>
+</body>
+</html>

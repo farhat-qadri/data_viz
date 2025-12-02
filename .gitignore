@@ -1,0 +1,13 @@
+# Ignore virtual environment
+venv/
+
+# Ignore large data folder
+data/
+
+# Optional recommended ignores
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.DS_Store
