@@ -4,13 +4,18 @@ from data_loader import DataLoader
 app = Flask(__name__)
 loader = DataLoader()
 
+# --- IMPORTANT: LOAD DATA ON STARTUP ---
+print("Initializing Data Loader...")
+loader.load_data()
+print("Data Ready.")
+
 @app.route('/')
 def dashboard():
-    # Check if files exist (just for status indicator)
+    # Check status
     db_status = loader.check_files()
     
-    # Get the placeholder graphs (so the JS doesn't crash)
-    graphs = loader.get_placeholders()
+    # Get Visuals (Now using the correct function name)
+    graphs = loader.get_visuals()
     
     return render_template('dashboard.html', 
                            status=db_status, 

@@ -107,8 +107,26 @@
         <div id="history" class="view-section">
              <div class="row">
                 <div class="col-md-12">
-                    <div class="viz-card">
-                        <div id="credit-hist"></div>
+                    <div class="viz-card p-0 overflow-hidden" style="min-height: 750px; position: relative;">
+                        <div class="p-3 border-bottom bg-light d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0 fw-bold text-secondary">Customer Journey Timeline</h5>
+                            <span class="badge bg-primary">Interactive HTML</span>
+                        </div>
+                        
+                        <div id="iframe-loader" class="text-center p-5 text-muted">
+                            <div class="spinner-border text-primary mb-3" role="status"></div>
+                            <p>Loading large dataset...</p>
+                        </div>
+
+                        <iframe 
+                            id="history-frame"
+                            data-src="{{ url_for('static', filename='charts/stacked_boxes_timeline_auto.html') }}"
+                            width="100%" 
+                            height="750px" 
+                            frameborder="0" 
+                            style="border: none; display: none;" 
+                            onload="this.style.display='block'; document.getElementById('iframe-loader').style.display='none';">
+                        </iframe>
                     </div>
                 </div>
             </div>
@@ -133,11 +151,21 @@
             });
             element.classList.add('active');
 
-            // 4. Force Plotly to resize (fixes layout bugs when switching tabs)
+            // 4. Force Plotly to resize
             window.dispatchEvent(new Event('resize'));
+
+            // 5. LAZY LOAD TRIGGER (The Fix)
+            if (viewId === 'history') {
+                var iframe = document.getElementById('history-frame');
+                // Only load if it hasn't been loaded yet
+                if (!iframe.src && iframe.getAttribute('data-src')) {
+                    console.log("Lazy loading history chart...");
+                    iframe.src = iframe.getAttribute('data-src');
+                }
+            }
         }
 
-        // RENDER PLACEHOLDER CHARTS
+        // RENDER PYTHON CHARTS
         var graphs = {{ graphs | tojson | safe }};
         
         Plotly.newPlot('kpi-trend', JSON.parse(graphs.kpi_trend));
@@ -145,7 +173,6 @@
         Plotly.newPlot('edu-bar', JSON.parse(graphs.edu_bar));
         Plotly.newPlot('gender-pie', JSON.parse(graphs.gender_pie));
         Plotly.newPlot('income-box', JSON.parse(graphs.income_box));
-        Plotly.newPlot('credit-hist', JSON.parse(graphs.credit_hist));
 
     </script>
 </body>
